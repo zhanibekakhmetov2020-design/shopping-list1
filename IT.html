@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shopping List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0a0a1a;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: linear-gradient(135deg, #0d0d2b, #1a1a40, #2d1b69);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 0 30px rgba(130, 80, 255, 0.3), 0 0 60px rgba(0, 255, 200, 0.1);
+            height: fit-content;
+            border: 1px solid rgba(130, 80, 255, 0.25);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            color: #ffffff;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(130, 80, 255, 0.6);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a89ec8;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        #itemInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid rgba(130, 80, 255, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        #itemInput::placeholder {
+            color: #7a70a0;
+        }
+
+        #itemInput:focus {
+            border-color: #00ffc8;
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.25);
+        }
+
+        #addBtn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #8250ff, #00ffc8);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 0 12px rgba(130, 80, 255, 0.3);
+        }
+
+        #addBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 200, 0.4);
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 13px;
+            color: #7a70a0;
+            margin-bottom: 16px;
+        }
+
+        .counter span {
+            font-weight: bold;
+            color: #00ffc8;
+        }
+
+        #shoppingList {
+            list-style: none;
+        }
+
+        #shoppingList li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #8250ff;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .status-dot {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            border-radius: 50%;
+            background-color: #ff3860;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            border: 3px solid rgba(255, 56, 96, 0.3);
+            box-shadow: 0 0 8px rgba(255, 56, 96, 0.4);
+        }
+
+        .status-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .status-dot.bought {
+            background-color: #00ffc8;
+            border-color: rgba(0, 255, 200, 0.3);
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.5);
+        }
+
+        .item-name {
+            font-size: 16px;
+            color: #e0daf0;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+        .item-name.bought {
+            text-decoration: line-through;
+            color: #5a5280;
+        }
+
+        .item-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .status-label {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .status-label.pending {
+            background-color: rgba(255, 56, 96, 0.15);
+            color: #ff3860;
+        }
+
+        .status-label.done {
+            background-color: rgba(0, 255, 200, 0.1);
+            color: #00ffc8;
+        }
+
+        #shoppingList li.bought {
+            border-left-color: #00ffc8;
+            background-color: rgba(0, 255, 200, 0.05);
+        }
+
+        .delete-btn {
+            padding: 6px 14px;
+            background-color: rgba(255, 56, 96, 0.2);
+            color: #ff3860;
+            border: 1px solid rgba(255, 56, 96, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .delete-btn:hover {
+            background-color: #ff3860;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #5a5280;
+            font-size: 15px;
+            padding: 30px 0;
+        }
+
+        .empty-message .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .alert {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 16px;
+            background-color: rgba(255, 56, 96, 0.1);
+            color: #ff3860;
+            border: 1px solid rgba(255, 56, 96, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🛒 My Shopping List</h1>
+        <p class="subtitle">Add items, click the dot to mark as bought, and delete when done.</p>
+
+        <div class="alert" id="alertBox">⚠️ Please enter an item.</div>
+
+        <div class="input-area">
+            <input type="text" id="itemInput" placeholder="Enter an item...">
+            <button id="addBtn" onclick="addItem()">Add Item</button>
+        </div>
+
+        <div class="counter" id="counter">You have <span>0</span> items in your list</div>
+
+        <ul id="shoppingList"></ul>
+
+        <div class="empty-message" id="emptyMessage">
+            <span class="icon">📝</span>
+            Your list is empty. Add some items!
+        </div>
+    </div>
+
+    <script>
+        var input = document.getElementById("itemInput");
+        var list = document.getElementById("shoppingList");
+        var alertBox = document.getElementById("alertBox");
+        var emptyMessage = document.getElementById("emptyMessage");
+        var counter = document.getElementById("counter");
+        var itemCount = 0;
+
+        function addItem() {
+            var itemText = input.value.trim();
+
+            if (itemText === "") {
+                alertBox.style.display = "block";
+                setTimeout(function () {
+                    alertBox.style.display = "none";
+                }, 2000);
+                return;
+            }
+
+            alertBox.style.display = "none";
+
+            var li = document.createElement("li");
+            var itemLeft = document.createElement("div");
+            itemLeft.className = "item-left";
+
+            var dot = document.createElement("div");
+            dot.className = "status-dot";
+            dot.title = "Click to mark as bought";
+
+            var nameSpan = document.createElement("span");
+            nameSpan.className = "item-name";
+            nameSpan.textContent = itemText;
+
+            var itemButtons = document.createElement("div");
+            itemButtons.className = "item-buttons";
+
+            var statusLabel = document.createElement("span");
+            statusLabel.className = "status-label pending";
+            statusLabel.textContent = "Pending";
+
+            dot.onclick = function () {
+                var isBought = dot.classList.toggle("bought");
+                nameSpan.classList.toggle("bought");
+                li.classList.toggle("bought");
+
+                if (isBought) {
+                    statusLabel.textContent = "Bought";
+                    statusLabel.className = "status-label done";
+                    dot.title = "Click to mark as not bought";
+                } else {
+                    statusLabel.textContent = "Pending";
+                    statusLabel.className = "status-label pending";
+                    dot.title = "Click to mark as bought";
+                }
+            };
+
+            var deleteBtn = document.createElement("button");
+            deleteBtn.className = "delete-btn";
+            deleteBtn.textContent = "Delete";
+
+            deleteBtn.onclick = function () {
+                li.style.animation = "slideIn 0.3s ease reverse";
+                setTimeout(function () {
+                    list.removeChild(li);
+                    itemCount--;
+                    updateCounter();
+                    checkEmpty();
+                }, 250);
+            };
+
+            itemLeft.appendChild(dot);
+            itemLeft.appendChild(nameSpan);
+            itemButtons.appendChild(statusLabel);
+            itemButtons.appendChild(deleteBtn);
+            li.appendChild(itemLeft);
+            li.appendChild(itemButtons);
+            list.appendChild(li);
+
+            itemCount++;
+            updateCounter();
+            input.value = "";
+            emptyMessage.style.display = "none";
+            input.focus();
+        }
+
+        function updateCounter() {
+            counter.innerHTML = "You have <span>" + itemCount + "</span> item" + (itemCount !== 1 ? "s" : "") + " in your list";
+        }
+
+        function checkEmpty() {
+            if (itemCount === 0) {
+                emptyMessage.style.display = "block";
+            } else {
+                emptyMessage.style.display = "none";
+            }
+        }
+
+        input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                addItem();
+            }
+        });
+    </script>
+</body>
+</html>
